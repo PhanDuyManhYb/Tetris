@@ -1,6 +1,7 @@
 import pygame
 import random
 
+# Thiết lập bảng màu sắc
 colors = [
     (0, 0, 0),
     (120, 37, 179),
@@ -11,11 +12,13 @@ colors = [
     (180, 34, 122),
 ]
 
-
+# Lớp hình khối
 class Figure:
+    # Thuộc tính tọa độ
     x = 0
     y = 0
 
+    # Thuộc tính hình khối
     figures = [
         [[1, 5, 9, 13], [4, 5, 6, 7]],
         [[4, 5, 9, 10], [2, 6, 5, 9]],
@@ -26,6 +29,7 @@ class Figure:
         [[1, 2, 5, 6]],
     ]
 
+    # Phương thức chọn khối ngẫu nhiên
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -33,14 +37,17 @@ class Figure:
         self.color = random.randint(1, len(colors) - 1)
         self.rotation = 0
 
+    # Phương thức in khối ra màn hình
     def image(self):
         return self.figures[self.type][self.rotation]
 
+    # Phương thức tạo hình xoay khối
     def rotate(self):
         self.rotation = (self.rotation + 1) % len(self.figures[self.type])
 
-
+# Lớp màn hình chơi
 class Tetris:
+    # Phương thức thiết lập màn hình chơi
     def __init__(self, height, width):
         self.level = 2
         self.score = 0
@@ -64,9 +71,11 @@ class Tetris:
                 new_line.append(0)
             self.field.append(new_line)
 
+    # Phương thức thêm khối mới
     def new_figure(self):
         self.figure = Figure(3, 0)
 
+    # Phương thức xử lý va chạm khối
     def intersects(self):
         intersection = False
         for i in range(4):
@@ -79,6 +88,7 @@ class Tetris:
                         intersection = True
         return intersection
 
+    # Phương thức ăn điểm
     def break_lines(self):
         lines = 0
         for i in range(1, self.height):
@@ -93,18 +103,21 @@ class Tetris:
                         self.field[i1][j] = self.field[i1 - 1][j]
         self.score += lines ** 2
 
+    # Phương thức đóng băng khối đã xếp
     def go_space(self):
         while not self.intersects():
             self.figure.y += 1
         self.figure.y -= 1
         self.freeze()
-
+        
+    # Phương thức rơi khối
     def go_down(self):
         self.figure.y += 1
         if self.intersects():
             self.figure.y -= 1
             self.freeze()
 
+    # Phương thức xử lý đóng băng
     def freeze(self):
         for i in range(4):
             for j in range(4):
@@ -115,12 +128,14 @@ class Tetris:
         if self.intersects():
             self.state = "gameover"
 
+    # Phương thức xử lý ở cạnh
     def go_side(self, dx):
         old_x = self.figure.x
         self.figure.x += dx
         if self.intersects():
             self.figure.x = old_x
 
+    # Phương thức xoay khối
     def rotate(self):
         old_rotation = self.figure.rotation
         self.figure.rotate()
@@ -128,10 +143,10 @@ class Tetris:
             self.figure.rotation = old_rotation
 
 
-# Initialize the game engine
+# Khởi chạy game
 pygame.init()
 
-# Define some colors
+# Xác định màu
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GRAY = (128, 128, 128)
@@ -141,7 +156,7 @@ screen = pygame.display.set_mode(size)
 
 pygame.display.set_caption("Tetris")
 
-# Loop until the user clicks the close button.
+# Lặp cho đến khi nhấn đóng
 done = False
 clock = pygame.time.Clock()
 fps = 25
